@@ -2,7 +2,7 @@
 
 ## Chosen Dataset:
 
-https://www.alphavantage.co/. I will be working with one dataset which is from TIME_SERIES_MONTHLY API. This API returns JSON format historical data of a specified global equity on a monthly basis. This API returns data for specified sector equity from year 1999 to 2020 latest market close date. I will be using one data set which is from year 2008 to 2020 for examination. API data contains monthly trading details of equity stock such as last trading day of each month, monthly open, monthly high, monthly low, monthly close and monthly volume. An API key is required for this dataset to access.
+https://www.alphavantage.co/. I will leverage dataset which is requested from TIME_SERIES_MONTHLY API. As a response this API returns JSON format historical data of a specified global equity on a monthly basis. It also returns data for specified sector equity from year 1999 to 2020 latest market close date, out of which I will be using a part of data set which is from year 2008 to 2020 for examination. This data contains monthly trading details of equity stock such as last trading day of each month, monthly open, monthly high, monthly low, monthly close and monthly volume. An API key is required for this dataset to access.
 
 ## Application Name:
 
@@ -10,13 +10,13 @@ Recession Impact Analysis on Stock Market Sectors
 
 ## Project Objective:
 
-The main objective is to examine how the 11 stock market sectors (Materials, Industrials, Financials, Energy, Consumer discretionary, Information technology, Communication services, Real estate, Health care, Consumer staples and Utilities ) are affected by two major recessions in 2008 and 2020. This application Analyzes which sectors majorly rise or fell due to the covid-19 pandemic situation, which sectors were able maintain a steady growth despite recession, and how long it has taken for majorly affected sectors to recover from losses.
+The main objective is to examine how the 11 stock market sectors (Materials, Industrials, Financials, Energy, Consumer discretionary, Information technology, Communication services, Real estate, Health care, Consumer staples and Utilities ) are affected by two major recessions in 2008 and 2020. This application analyzes which sectors majorly rose or fell due to the covid-19 pandemic situation, which sectors were able maintain a steady growth despite recession, and how long it has taken for majorly affected sectors to recover from losses.
 
 
 By examining chosen dataset through my application, I would like to answer the following questions:
--	What is the most affected stock market sector during 2020 recession?
--	What is the most affected stock market sector during 2008 recession?
+-	What is the most affected stock market sector during 2008 and 2020 recessions?
 -	How long has it taken for the most affected sector to recover from its low after 2008 recession?
+-	Display stock trends from 2008 to 2020 for a user selected sector?
 
 ## Motivation:
 
