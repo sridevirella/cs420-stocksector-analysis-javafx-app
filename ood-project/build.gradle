@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
 }
 
 group 'neiu.420.cs'
@@ -25,3 +27,9 @@ dependencies {
     implementation "javax.ws.rs:javax.ws.rs-api:2.1.1"
     implementation "com.googlecode.json-simple:json-simple:1.1.1"
 }
+
+javafx {
+    modules = ['javafx.controls']
+}
+
+    mainClassName = 'javafx.SectorDataApp'

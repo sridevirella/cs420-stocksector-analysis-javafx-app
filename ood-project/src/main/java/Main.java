@@ -1,7 +1,7 @@
-import api.ReadWriteFile;
+import api.ReadFile;
+import api.WriteFile;
 import org.json.simple.parser.ParseException;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
@@ -13,14 +13,13 @@ public class Main {
                                     "XLP.txt","XLRE.txt","XLU.txt","XLV.txt","XLY.txt"
                                    };
         try {
-            ReadWriteFile readWriteFileInstance = new ReadWriteFile( fileNames );
-            readWriteFileInstance.getApiDataAndWriteToFile();
+              WriteFile writeFileInstance = new WriteFile( fileNames );
+              writeFileInstance.getApiDataAndWriteToFile();
 
         } catch ( URISyntaxException | IOException | ParseException | InterruptedException use ) {
             System.out.println( use.toString() );
         } catch ( Exception e ){
             e.printStackTrace();
         }
-
     }
 }

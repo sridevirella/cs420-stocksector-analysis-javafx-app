@@ -7,7 +7,7 @@ import java.net.URL;
 
 public class HttpClientConnection {
 
-    final static int connectTimeout = 3000;
+    private final static int connectTimeout = 3000;
     private final static String apiKey = System.getenv("API_KEY");
 
     public InputStream getApiData( String sectorSymbol ) throws IOException {
