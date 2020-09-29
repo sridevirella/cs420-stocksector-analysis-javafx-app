@@ -1,5 +1,7 @@
 package domain;
-//separate package
+
+import java.util.Objects;
+
 public class MonthlyData {
 
     private String date;
@@ -8,8 +10,6 @@ public class MonthlyData {
     private double low;
     private double close;
     private long volume;
-
-    private MonthlyData(){}
 
     public MonthlyData(String date, double open, double high, double low, double close, long volume) {
 
@@ -41,4 +41,21 @@ public class MonthlyData {
                 " }";
     }
 
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) return true;
+        if (!(o instanceof MonthlyData)) return false;
+        MonthlyData that = (MonthlyData) o;
+        return Double.compare(that.open, open) == 0 &&
+                Double.compare(that.high, high) == 0 &&
+                Double.compare(that.low, low) == 0 &&
+                Double.compare(that.close, close) == 0 &&
+                volume == that.volume;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(open, high, low, close, volume);
+    }
 }

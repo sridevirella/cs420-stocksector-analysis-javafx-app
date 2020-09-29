@@ -83,6 +83,7 @@ public class YearlyDataUtil {
     }
 
     private static void addToList( List<String> list){
+
         list.addAll(Arrays.asList(yearsArr));
     }
 
