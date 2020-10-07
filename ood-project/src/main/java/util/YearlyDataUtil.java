@@ -2,6 +2,7 @@ package util;
 
 import api.ReadFile;
 import domain.MonthlyData;
+import domain.YearName;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -15,16 +16,14 @@ import java.util.*;
 public class YearlyDataUtil {
 
     private YearlyDataUtil() {}
-    private static final String[] yearsArr = {"2008", "2009", "2010", "2011", "2012", "2013",
-                                              "2014", "2015", "2016", "2017", "2018", "2019", "2020"};
 
-    public static List<MonthlyData> getDataFromFile(String fileName ) throws IOException, ParseException {
+    public static Map<YearName, List<MonthlyData>> getYearlyDataMap(String fileName ) throws IOException, ParseException {
 
          List<MonthlyData> monthlyDataList = new ArrayList<>();
          BufferedReader br = saveToBuffer( fileName );
          getEachLine( br, monthlyDataList );
          br.close();
-        return monthlyDataList;
+        return createYearlyDataMap( monthlyDataList );
     }
 
     private static BufferedReader saveToBuffer( String fileName ) throws IOException {
@@ -60,9 +59,9 @@ public class YearlyDataUtil {
         mdList.add(new MonthlyData( key, open, high, low, close, volume ));
     }
 
-    public static Map<String, List<MonthlyData>> getYearlyDataMap( List<MonthlyData> monthlyDataList ) {
+    public static Map<YearName, List<MonthlyData>> createYearlyDataMap(List<MonthlyData> monthlyDataList ) {
 
-        Map<String, List<MonthlyData>> yearlyDataMap = new HashMap<>();
+        Map<YearName, List<MonthlyData>> yearlyDataMap = new HashMap<>();
 
         for( MonthlyData md: monthlyDataList ){
             String year =  md.getDate().substring(0,4);
@@ -72,26 +71,21 @@ public class YearlyDataUtil {
         return yearlyDataMap;
     }
 
-    private static void categorise( String year, MonthlyData md, Map<String,List<MonthlyData>> yearlyDataMap ){
+    private static void categorise( String year, MonthlyData md, Map<YearName,List<MonthlyData>> yearlyDataMap ){
 
-        List<String> yearsList = new ArrayList<>();
-        addToList( yearsList);
+        for( YearName yearCategory : YearName.values()){
 
-        if( yearsList.contains(year)){
-            addToMap( year, md, yearlyDataMap);
+            if( yearCategory.getYear().equals(year))
+                addToMap( yearCategory, md, yearlyDataMap );
         }
     }
 
-    private static void addToList( List<String> list){
+    private static void addToMap(YearName yearName, MonthlyData md, Map<YearName, List<MonthlyData>> map){
 
-        list.addAll(Arrays.asList(yearsArr));
-    }
-
-    private static void addToMap(String year, MonthlyData md, Map<String, List<MonthlyData>> map){
-
-        if(!map.containsKey(year))
-            map.put( year, new ArrayList<>(Collections.singletonList(md)) );
+        if(!map.containsKey(yearName))
+            map.put( yearName, new ArrayList<>(Collections.singletonList(md)) );
         else
-            map.get(year).add(md);
+            map.get(yearName).add(md);
     }
+
 }

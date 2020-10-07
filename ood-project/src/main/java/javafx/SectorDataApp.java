@@ -1,6 +1,8 @@
 package javafx;
 
 import domain.MonthlyData;
+import domain.SectorName;
+import domain.YearName;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -10,11 +12,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import org.json.simple.parser.ParseException;
+import util.SectorDataUtil;
 import util.YearlyDataUtil;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,46 +32,81 @@ public class SectorDataApp extends Application {
     @Override
     public void start(Stage stage) throws IOException, ParseException {
 
-        final ComboBox<String> cb = new ComboBox<>();
-        List<MonthlyData> monthlyDataList = initReadFile();
+        final ComboBox<SectorName> sectorComboBox = new ComboBox<>();
+        final ComboBox<YearName> yearlyComboBox = new ComboBox<>();
         ListView<MonthlyData> listView = new ListView<>();
 
-        callListener( cb, listView,  addToComboBox( cb, monthlyDataList) );
-        CreateBorderPane( cb, stage, listView );
+        initSetup( sectorComboBox, yearlyComboBox, listView, stage );
     }
 
-    private List<MonthlyData> initReadFile() throws IOException, ParseException {
+    private void initSetup( ComboBox<SectorName> sectorComboBox, ComboBox<YearName> yearlyComboBox,
+                            ListView<MonthlyData> listView, Stage stage ) throws IOException, ParseException {
 
-        String fileName = "XLB.txt";
-        return YearlyDataUtil.getDataFromFile(fileName);
+        setComboBoxPrompt( sectorComboBox, yearlyComboBox );
+        sectorCbListener( sectorComboBox, yearlyComboBox, addSectorData( sectorComboBox ) );
+        yearCbListener( yearlyComboBox, listView );
+        createBorderPane( yearlyComboBox, sectorComboBox, stage, listView );
     }
 
-    private  Map<String, List<MonthlyData>> addToComboBox( ComboBox<String> cb, List<MonthlyData> monthlyDataList){
+    private void sectorCbListener( ComboBox<SectorName> scb, ComboBox<YearName> ycb,
+                                   Map<SectorName, Map<YearName,List<MonthlyData>>> smd ) {
 
-        cb.setPromptText("---Select a Year---");
-        Map<String, List<MonthlyData>> categories = YearlyDataUtil.getYearlyDataMap( (monthlyDataList) );
-        ObservableList<String> yearRanges = FXCollections.observableArrayList( categories.keySet() );
-        cb.getItems().addAll( yearRanges.sorted() );
-        return categories;
-    }
-
-    private void  callListener( ComboBox<String> cb, ListView<MonthlyData> listView,  Map<String,List<MonthlyData>> categories) {
-
-        cb.valueProperty().addListener(new ChangeListener<String>() {
+        scb.valueProperty().addListener(new ChangeListener<SectorName>() {
             @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                listView.getItems().clear();
-                listView.getItems().addAll(categories.get(newValue));
+            public void changed( ObservableValue<? extends SectorName> observable, SectorName oldValue, SectorName newValue ) {
+
+                if( newValue != null ) {
+                    addDataToYearlyComboBox( ycb, smd, newValue );
+                }
             }
         });
     }
 
-    private void CreateBorderPane(ComboBox<String> cb, Stage stage, ListView<MonthlyData> listView){
+    private void addDataToYearlyComboBox( ComboBox<YearName> ycb, Map<SectorName, Map<YearName,List<MonthlyData>>> smd, SectorName newValue ) {
+
+        ycb.getItems().clear();
+        addYearlyData(ycb, smd.get(newValue));
+        SectorDataUtil.setSelectedSectorYearlyData(smd.get(newValue));
+    }
+
+    private  Map<SectorName, Map<YearName,List<MonthlyData>>> addSectorData( ComboBox<SectorName> scb ) throws IOException, ParseException {
+
+        Map<SectorName, Map<YearName, List<MonthlyData>>> sectors = SectorDataUtil.getSectorsDataMap();
+        ObservableList<SectorName> sectorNames = FXCollections.observableArrayList( sectors.keySet() );
+        scb.getItems().addAll( sectorNames.sorted());
+        return sectors;
+    }
+
+    private void  yearCbListener( ComboBox<YearName> cb, ListView<MonthlyData> listView ) {
+
+        cb.valueProperty().addListener(new ChangeListener<YearName>() {
+            @Override
+            public void changed(ObservableValue<? extends YearName> observable, YearName oldValue, YearName newValue) {
+
+                if (newValue != null) {
+
+                    listView.getItems().clear();
+                    listView.getItems().addAll(SectorDataUtil.getSelectedSectorYearlyData().get(newValue));
+                }
+            }
+        });
+    }
+
+    private  Map<YearName, List<MonthlyData>> addYearlyData(ComboBox<YearName> cb, Map<YearName, List<MonthlyData>> mdl ) {
+
+        ObservableList<YearName> yearRanges = FXCollections.observableArrayList( mdl.keySet() );
+        cb.getItems().setAll( yearRanges.sorted());
+        return mdl;
+    }
+
+
+    private void createBorderPane(ComboBox<YearName> ycb, ComboBox<SectorName> scb, Stage stage, ListView<MonthlyData> listView) {
 
         BorderPane pane = new BorderPane();
-        pane.setTop(cb);
-        pane.setCenter(listView);
-        setStage( pane, stage);
+        FlowPane flowPane = new FlowPane(30.0, 20.0, scb, ycb );
+        pane.setTop( flowPane );
+        pane.setCenter( listView );
+        setStage( pane, stage );
     }
 
     private void setStage( BorderPane pane, Stage stage ){
@@ -75,5 +115,10 @@ public class SectorDataApp extends Application {
         stage.setScene(scene);
         stage.setTitle("Stock Sectors Yearly Data");
         stage.show();
+    }
+
+    private void setComboBoxPrompt( ComboBox<SectorName> scb, ComboBox<YearName> ycb) {
+        scb.setPromptText("---Select a Sector---");
+        ycb.setPromptText("---Select a Year---");
     }
 }

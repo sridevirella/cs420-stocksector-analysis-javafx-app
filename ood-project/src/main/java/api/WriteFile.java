@@ -11,13 +11,13 @@ public class WriteFile {
 
     private final String[] symbols;
     private final String[] fullFilePath;
-    private final HttpClientConnection httpConnInst;
+    private final HttpClient httpConnInst;
     private static BufferedWriter bw;
 
     public WriteFile(String[] fileName) throws URISyntaxException {
 
         this.fullFilePath = createFile( fileName );
-        this.httpConnInst = new HttpClientConnection();
+        this.httpConnInst = new HttpClient();
         this.symbols = getSectorNames( fileName );
     }
 
