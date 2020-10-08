@@ -75,7 +75,7 @@ public class YearlyDataUtil {
 
         for( YearName yearCategory : YearName.values()){
 
-            if( yearCategory.getYear().equals(year))
+            if( yearCategory.getYear() == (Integer.parseInt(year)) )
                 addToMap( yearCategory, md, yearlyDataMap );
         }
     }

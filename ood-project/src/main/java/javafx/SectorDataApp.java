@@ -16,10 +16,10 @@ import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import org.json.simple.parser.ParseException;
 import util.SectorDataUtil;
-import util.YearlyDataUtil;
+import util.SectorNameComparator;
+import util.YearlyNameComparator;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +73,7 @@ public class SectorDataApp extends Application {
 
         Map<SectorName, Map<YearName, List<MonthlyData>>> sectors = SectorDataUtil.getSectorsDataMap();
         ObservableList<SectorName> sectorNames = FXCollections.observableArrayList( sectors.keySet() );
-        scb.getItems().addAll( sectorNames.sorted());
+        scb.getItems().addAll( sectorNames.sorted(new SectorNameComparator()));
         return sectors;
     }
 
@@ -92,11 +92,10 @@ public class SectorDataApp extends Application {
         });
     }
 
-    private  Map<YearName, List<MonthlyData>> addYearlyData(ComboBox<YearName> cb, Map<YearName, List<MonthlyData>> mdl ) {
+    private  void addYearlyData(ComboBox<YearName> cb, Map<YearName, List<MonthlyData>> mdl ) {
 
         ObservableList<YearName> yearRanges = FXCollections.observableArrayList( mdl.keySet() );
-        cb.getItems().setAll( yearRanges.sorted());
-        return mdl;
+        cb.getItems().addAll( yearRanges.sorted(new YearlyNameComparator()));
     }
 
 
