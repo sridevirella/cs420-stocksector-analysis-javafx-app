@@ -10,29 +10,19 @@ import java.util.*;
 
 public class SectorDataUtil {
 
-    private static Map<YearName, List<MonthlyData>> yearlyDataMap;
     private SectorDataUtil() {}
 
     public static Map<SectorName, Map<YearName, List<MonthlyData>>> getSectorsDataMap() throws IOException, ParseException {
 
         Map<SectorName, Map<YearName, List<MonthlyData>>> sectorDataMap = new HashMap<>();
-        getAllSectorsData( sectorDataMap );
+        getAllSectorsData(sectorDataMap);
         return sectorDataMap;
     }
 
-    private static void getAllSectorsData( Map<SectorName, Map<YearName, List<MonthlyData>>> sdm ) throws IOException, ParseException {
+    private static void getAllSectorsData(Map<SectorName, Map<YearName, List<MonthlyData>>> sdm) throws IOException, ParseException {
 
         for (SectorName sectorName : SectorName.values())
-            sdm.put( sectorName, YearlyDataUtil.getYearlyDataMap(sectorName.getSector() + ".txt") );
+            sdm.put(sectorName, YearlyDataUtil.getYearlyDataMap(sectorName.getSector() + ".txt"));
     }
-
-    public static void setSelectedSectorYearlyData( Map<YearName, List<MonthlyData>> yearlyMap ) {
-        yearlyDataMap = yearlyMap;
-    }
-
-    public static Map<YearName, List<MonthlyData>> getSelectedSectorYearlyData(){
-        return yearlyDataMap;
-    }
-
 }
 

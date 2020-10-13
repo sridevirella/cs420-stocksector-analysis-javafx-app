@@ -32,4 +32,4 @@ javafx {
     modules = ['javafx.controls']
 }
 
-    mainClassName = 'javafx.SectorDataApp'
+    mainClassName = 'SectorDataApp'

@@ -29,6 +29,14 @@ public class MonthlyData {
         this.date = month;
     }
 
+    public double getOpen() {
+        return open;
+    }
+
+    public double getClose() {
+        return close;
+    }
+
     @Override
     public String toString() {
         return "MonthlyPrice{ " +
