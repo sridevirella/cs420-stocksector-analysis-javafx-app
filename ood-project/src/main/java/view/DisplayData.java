@@ -4,8 +4,6 @@ import domain.MonthlyData;
 import domain.SectorName;
 import domain.YearName;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
@@ -19,7 +17,6 @@ import static util.SectorDataUtil.getSectorsDataMap;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -50,7 +47,7 @@ public class DisplayData {
         setStringConverterToListView();
     }
 
-    private class SectorNameStringConverter extends StringConverter<SectorName> {
+    private static class SectorNameStringConverter extends StringConverter<SectorName> {
 
         private final String separator = ", Symbol: ";
 
@@ -77,7 +74,7 @@ public class DisplayData {
 
     private void setStringConverterToListView() {
 
-        listView.setCellFactory(lv->{
+        listView.setCellFactory( lv -> {
             TextFieldListCell<MonthlyData> cell = new TextFieldListCell<>();
             cellDataStringConversion(cell);
             return cell ;
@@ -116,24 +113,16 @@ public class DisplayData {
     }
 
     private ObservableList<SectorName> sortSectors() {
-        return sectorNames.sorted(new Comparator<SectorName>() {
-            @Override
-            public int compare(SectorName o1, SectorName o2) {
-                return o1.getOrder() - o2.getOrder();
-            }
-        });
+        return sectorNames.sorted((o1, o2) -> o1.getOrder() - o2.getOrder());
     }
 
     private void sectorCbListener() {
 
-        sectorComboBox.valueProperty().addListener(new ChangeListener<SectorName>() {
-            @Override
-            public void changed(ObservableValue<? extends SectorName> observable, SectorName oldValue, SectorName newValue ) {
+        sectorComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
 
-                if( newValue != null ) {
-                    listView.setVisible(false);
-                    addSelectedSectorData( newValue );
-                }
+            if( newValue != null ) {
+                listView.setVisible(false);
+                addSelectedSectorData( newValue );
             }
         });
     }
@@ -172,37 +161,24 @@ public class DisplayData {
     }
 
     private ObservableList<YearName> sortYears(ObservableList<YearName> yearRanges) {
-        return yearRanges.sorted(new Comparator<YearName>() {
-            @Override
-            public int compare(YearName o1, YearName o2) {
-                return Integer.compare(o1.getYear(), o2.getYear());
-            }
-        });
+        return yearRanges.sorted((o1, o2) -> Integer.compare(o1.getYear(), o2.getYear()));
     }
 
     private void  yearCbListener() {
 
-        yearlyComboBox.valueProperty().addListener(new ChangeListener<YearName>() {
-            @Override
-            public void changed(ObservableValue<? extends YearName> observable, YearName oldValue, YearName newValue) {
+        yearlyComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
 
-                if (newValue != null) {
-                    listView.getItems().clear();
-                    listView.getItems().addAll(sortMonths(yearlyMap.get(newValue)));
-                    listView.setVisible(true);
-                }
+            if (newValue != null) {
+                listView.getItems().clear();
+                listView.getItems().addAll(sortMonths(yearlyMap.get(newValue)));
+                listView.setVisible(true);
             }
         });
     }
 
     private List<MonthlyData> sortMonths(List<MonthlyData> monthlyDataList) {
 
-        monthlyDataList.sort(new Comparator<MonthlyData>() {
-            @Override
-            public int compare(MonthlyData o1, MonthlyData o2) {
-                return compareMonths(o1, o2);
-            }
-        });
+        monthlyDataList.sort((o1, o2) -> compareMonths(o1, o2));
         return monthlyDataList;
     }
 

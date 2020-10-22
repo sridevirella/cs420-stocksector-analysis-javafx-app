@@ -8,6 +8,8 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.util.*;
 
+import static util.YearlyDataUtil.getYearlyDataMap;
+
 public class SectorDataUtil {
 
     private SectorDataUtil() {}
@@ -22,7 +24,7 @@ public class SectorDataUtil {
     private static void getAllSectorsData(Map<SectorName, Map<YearName, List<MonthlyData>>> sdm) throws IOException, ParseException {
 
         for (SectorName sectorName : SectorName.values())
-            sdm.put(sectorName, YearlyDataUtil.getYearlyDataMap(sectorName.getSector() + ".txt"));
+            sdm.put(sectorName, getYearlyDataMap(sectorName.getSector() + ".txt"));
     }
 }
 

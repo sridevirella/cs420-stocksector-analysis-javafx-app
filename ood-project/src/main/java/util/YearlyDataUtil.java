@@ -63,21 +63,21 @@ public class YearlyDataUtil {
 
         Map<YearName, List<MonthlyData>> yearlyDataMap = new HashMap<>();
 
-        for( MonthlyData md: monthlyDataList ){
-            String year =  md.getDate().substring(0,4);
-            categorise( year, md, yearlyDataMap);
-            md.setDate( Month.of( Integer.parseInt(md.getDate().substring(5,7))).name() ) ;
-        }
+        monthlyDataList.forEach(monthlyData -> {
+            String year =  monthlyData.getDate().substring(0,4);
+            categorise( year, monthlyData, yearlyDataMap);
+            monthlyData.setDate( Month.of( Integer.parseInt(monthlyData.getDate().substring(5,7))).name() ) ;
+        });
+
         return yearlyDataMap;
     }
 
     private static void categorise( String year, MonthlyData md, Map<YearName,List<MonthlyData>> yearlyDataMap ){
 
-        for( YearName yearCategory : YearName.values()){
-
+        Arrays.asList(YearName.values()).forEach( yearCategory -> {
             if( yearCategory.getYear() == (Integer.parseInt(year)) )
-                addToMap( yearCategory, md, yearlyDataMap );
-        }
+               addToMap( yearCategory, md, yearlyDataMap );
+        });
     }
 
     private static void addToMap(YearName yearName, MonthlyData md, Map<YearName, List<MonthlyData>> map){
