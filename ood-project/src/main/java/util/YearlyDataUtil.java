@@ -11,15 +11,15 @@ import java.io.InputStreamReader;
 import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class YearlyDataUtil {
 
+    private static List<MonthlyData> monthlyDataList;
     private YearlyDataUtil() {}
 
     public static Map<YearName, List<MonthlyData>> getYearlyDataMap(String fileName ) throws IOException {
 
-         List<MonthlyData> monthlyDataList = new ArrayList<>();
+         monthlyDataList = new ArrayList<>();
          BufferedReader br = saveToBuffer( fileName );
          getAllLines( br, monthlyDataList );
          br.close();
@@ -33,18 +33,17 @@ public class YearlyDataUtil {
 
     private static void getAllLines( BufferedReader br, List<MonthlyData> monthlyList ) {
 
-        Stream<JSONObject> jsonObject = br.lines().map(JSONObject::new);
-        jsonObject.map(JSONObject::keySet)
-                  .forEach( key ->  {
-                    getInnerObject(monthlyList, jsonObject, key);
+        br.lines().map(JSONObject::new)
+                  .forEach( jsonObj ->  {
+                   getInnerObject(monthlyList, jsonObj, jsonObj.keySet().stream()
+                                                                        .limit(1)
+                                                                        .collect(Collectors.toList()));
                 });
     }
 
-    private static void getInnerObject(List<MonthlyData> monthlyList, Stream<JSONObject> jsonObject, Set<String> key) {
+    private static void getInnerObject(List<MonthlyData> monthlyList, JSONObject jsonObject, List<String> keyList) {
 
-        List<JSONObject> innerJsonObjectList = jsonObject.map(jsonObject1 -> jsonObject1.getJSONObject(String.valueOf(key)))
-                                                         .collect(Collectors.toList());
-        convertToDomainObj( innerJsonObjectList.get(0), monthlyList, String.valueOf(key));
+        convertToDomainObj(jsonObject.getJSONObject(keyList.get(0)), monthlyList, String.valueOf(keyList.get(0)) );
     }
 
     private static void convertToDomainObj( JSONObject innerObj, List<MonthlyData> mdList, String key ) {
@@ -62,9 +61,10 @@ public class YearlyDataUtil {
         Map<YearName, List<MonthlyData>> yearlyDataMap = new HashMap<>();
 
         monthlyDataList.forEach(monthlyData -> {
+
             String year =  monthlyData.getDate().substring(0,4);
             categorise( year, monthlyData, yearlyDataMap);
-            monthlyData.setDate( Month.of( Integer.parseInt(monthlyData.getDate().substring(5,7))).name() ) ;
+            monthlyData.setDate( year + "," + Month.of( Integer.parseInt(monthlyData.getDate().substring(5,7))).name() ) ;
         });
 
         return yearlyDataMap;
@@ -84,5 +84,9 @@ public class YearlyDataUtil {
             map.put( yearName, new ArrayList<>(Collections.singletonList(md)) );
         else
             map.get(yearName).add(md);
+    }
+
+    public static List<MonthlyData> getMonthlyDataList() {
+        return monthlyDataList;
     }
 }

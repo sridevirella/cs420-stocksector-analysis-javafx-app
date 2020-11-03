@@ -7,10 +7,12 @@ import domain.YearName;
 import java.io.IOException;
 import java.util.*;
 
+import static util.YearlyDataUtil.getMonthlyDataList;
 import static util.YearlyDataUtil.getYearlyDataMap;
 
 public class SectorDataUtil {
 
+    private static List<List<MonthlyData>> allSectorMonthlyDataList;
     private SectorDataUtil() {}
 
     public static Map<SectorName, Map<YearName, List<MonthlyData>>> getSectorsDataMap() throws IOException {
@@ -22,8 +24,17 @@ public class SectorDataUtil {
 
     private static void getAllSectorsData(Map<SectorName, Map<YearName, List<MonthlyData>>> sdm) throws IOException {
 
-        for (SectorName sectorName : SectorName.values())
+        allSectorMonthlyDataList = new ArrayList<>(SectorName.values().length);
+
+        for (SectorName sectorName : SectorName.values()) {
             sdm.put(sectorName, getYearlyDataMap(sectorName.getSector() + ".txt"));
+            allSectorMonthlyDataList.add(getMonthlyDataList());
+        }
+    }
+
+    public static List<List<MonthlyData>> getAllSectorMonthlyDataList() {
+
+        return allSectorMonthlyDataList;
     }
 }
 

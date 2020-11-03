@@ -29,13 +29,15 @@ public class MonthlyData {
         this.date = month;
     }
 
-    public double getOpen() {
+    public double getOpenPrice() {
         return open;
     }
 
-    public double getClose() {
+    public double getClosePrice() {
         return close;
     }
+
+    public long getInFlowVolume() { return volume; }
 
     @Override
     public String toString() {

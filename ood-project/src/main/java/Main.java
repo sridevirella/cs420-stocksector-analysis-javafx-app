@@ -16,7 +16,6 @@ public class Main {
        Arrays.asList(SectorName.values()).forEach( sectorName -> {
            sectorNamesList.add(sectorName.getSector());
        });
-        System.out.println(Arrays.asList(SectorName.values()).toString());
 
         try {
               WriteFile writeFileInstance = new WriteFile( sectorNamesList );

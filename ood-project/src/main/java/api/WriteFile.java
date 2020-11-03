@@ -47,7 +47,6 @@ public class WriteFile {
         if(!Files.exists(getPath())) {
             Files.createDirectories(getPath());
         }
-        System.out.println("after direct");
         return getFullPath( fileName );
     }
 
@@ -60,14 +59,12 @@ public class WriteFile {
 
     private void getEachFilePath(List<String> fileName, Path filePath, Map<String, String> fileNameMap) {
 
-        fileName.stream()
-                .distinct()
-                .forEach(fName -> {
+        fileName.forEach(fName -> {
                 fileNameMap.put( fName, Path.of(filePath.toString(), fName+".txt").toString() );
            });
     }
 
-    private static Path getPath() throws IOException {
+    private static Path getPath() {
 
         return Path.of("build", "resources", "apidatafiles").toAbsolutePath();
     }
@@ -93,7 +90,7 @@ public class WriteFile {
        getYearRangeData(jsonObjectList.get(0));
     }
 
-    private void getYearRangeData(JSONObject monthlyData) throws IOException {
+    private void getYearRangeData(JSONObject monthlyData) {
 
         List<String> yearRangeDataList = new ArrayList<>();
 
@@ -104,12 +101,13 @@ public class WriteFile {
     }
 
     private void filterData(JSONObject monthlyData, List<String> yearRangeDataList, String keyStr) {
+
         int year = Integer.parseInt( keyStr.substring(0,4) );
         if( year >= YearName.YEAR_2008.getYear() && year <= YearName.YEAR_2020.getYear())
             yearRangeDataList.add("{" + "\"" + keyStr + "\"" + " : " + monthlyData.get(keyStr) + "}");
     }
 
-    private void writeToFile( List<String> yearRangeData ) throws IOException {
+    private void writeToFile( List<String> yearRangeData ) {
 
         yearRangeData.forEach(yearData -> {
             try {

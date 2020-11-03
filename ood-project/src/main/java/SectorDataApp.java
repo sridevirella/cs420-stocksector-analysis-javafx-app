@@ -1,17 +1,17 @@
-
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import view.DisplayData;
+import view.DisplaySectorsData;
+import view.SectorStockCharts;
 
 import java.io.IOException;
 
 public class SectorDataApp extends Application {
 
-    private DisplayData views;
+    private DisplaySectorsData sectorDataViews;
+    private SectorStockCharts chartViews;
+    private Scene scene1;
 
     public static void main(String[] args) {
         launch(args);
@@ -20,29 +20,24 @@ public class SectorDataApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
 
-        this.views = new DisplayData();
-        createBorderPane( stage );
+        this.sectorDataViews = new DisplaySectorsData();
+        this.chartViews = new SectorStockCharts();
+        createBorderPanes(stage);
+        radioGroupListener(stage);
     }
 
-    private void createBorderPane( Stage stage ) {
+    private void radioGroupListener(Stage stage) {
 
-        BorderPane pane = new BorderPane();
-        HBox hbox = new HBox();
-        setHBox( hbox );
-        pane.setTop( hbox );
-        pane.setCenter( views.getListView() );
-        setStage( pane, stage );
+        sectorDataViews.getChartsButton().setOnMouseClicked(event -> stage.setScene(scene1));
     }
 
-    private void setHBox( HBox hbox ) {
+    private void createBorderPanes( Stage stage ) {
 
-        hbox.setSpacing(50);
-        hbox.getChildren().addAll(views.getSectorComboBox(),  views.getYearlyComboBox(), views.getListView());
-        HBox.setMargin(views.getSectorComboBox(), new Insets(30, 5, 10, 10));
-        HBox.setMargin(views.getYearlyComboBox(), new Insets(30, 5, 5, 10));
+        setPrimaryStage( sectorDataViews.getComboBoxGroupPane(), stage );
+        scene1 = new Scene(chartViews.getRadioGroupPane(), 700, 600);
     }
 
-    private void setStage( BorderPane pane, Stage stage ){
+    private void setPrimaryStage( BorderPane pane, Stage stage ){
 
         Scene scene = new Scene(pane, 700, 500);
         stage.setScene(scene);
