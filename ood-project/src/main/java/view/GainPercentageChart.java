@@ -17,15 +17,24 @@ class GainPercentageChart {
 
         GainPercentageChart() {
 
-        stockGainPercentageData();
-        initPieChart();
+            this.pieChart = initPieChart();
     }
 
-    private void initPieChart() {
+    private PieChart initPieChart() {
 
         ObservableList<PieChart.Data> stockGainPieChart = FXCollections.observableArrayList( addDataToPieChart() );
         pieChart = new PieChart(stockGainPieChart);
         setPieChartProperties();
+        return pieChart;
+    }
+
+    private List<PieChart.Data> addDataToPieChart() {
+
+        stockGainPercentageData();
+        return getStockGainPercentageMap().keySet()
+                                          .stream()
+                                          .map( key -> { return new PieChart.Data( key, getStockGainPercentageMap().get(key) ); })
+                                          .collect(Collectors.toList());
     }
 
     private void setPieChartProperties() {
@@ -33,15 +42,6 @@ class GainPercentageChart {
         pieChart.setTitle("Sector stock price gain percentage from the year 2018 - 2020");
         pieChart.setLabelLineLength(10);
         pieChart.setLegendSide(Side.LEFT);
-        pieChart.setVisible(false);
-    }
-
-    private List<PieChart.Data> addDataToPieChart() {
-
-        return getStockGainPercentageMap().keySet()
-                                          .stream()
-                                          .map( key -> { return new PieChart.Data( key, getStockGainPercentageMap().get(key) ); })
-                                          .collect(Collectors.toList());
     }
 
     public PieChart getPieChart() {

@@ -27,23 +27,24 @@ import static util.SectorDataUtil.getSectorsDataMap;
 
 public class DisplaySectorsData {
 
-    private ComboBox<SectorName> sectorComboBox;
-    private ComboBox<YearName> yearlyComboBox;
-    private ListView<MonthlyData> listView;
     private HBox comboBoxLayout;
     private Button chartsButton;
+    private BorderPane comboBoxGroupPane;
+
+    private static ComboBox<SectorName> sectorComboBox;
+    private static ComboBox<YearName> yearlyComboBox;
+    private static ListView<MonthlyData> listView;
     private final Map<SectorName, Map<YearName, List<MonthlyData>>> sectorDataMap;
     private final ObservableList<SectorName> sectorNames;
-    private Map<YearName, List<MonthlyData>> yearlyMap;
-    private BorderPane comboBoxGroupPane;
+    private static Map<YearName, List<MonthlyData>> yearlyMap;
+
 
     public DisplaySectorsData() throws IOException {
 
         this.sectorDataMap = getSectorsDataMap();
         this.sectorNames = FXCollections.observableArrayList(sectorDataMap.keySet());
-        this.listView = new ListView<>();
         initSetUp();
-        createPane();
+        this.comboBoxGroupPane = createPane();
     }
 
     private void initSetUp() {
@@ -51,6 +52,12 @@ public class DisplaySectorsData {
         initChartButton();
         setUpYearComboBox();
         setUpSectorComboBox();
+        setupListView();
+        handleViewNodes();
+    }
+
+    private void handleViewNodes() {
+
         yearCbListener();
         handleYearlyCbPrompt();
         setStringConverterToListView();
@@ -90,6 +97,10 @@ public class DisplaySectorsData {
             cellDataStringConversion(cell);
             return cell ;
         });
+    }
+
+    private void setupListView() {
+        listView = new ListView<>();
     }
 
     private void cellDataStringConversion(TextFieldListCell<MonthlyData> cell) {
@@ -216,19 +227,25 @@ public class DisplaySectorsData {
     private void setHBoxLayout() {
 
         comboBoxLayout = new HBox();
-        comboBoxLayout.setSpacing(50);
+        comboBoxLayout.setSpacing(30);
         comboBoxLayout.getChildren().addAll( sectorComboBox,  yearlyComboBox, listView, chartsButton );
+        comboBoxLayout.setStyle("-fx-background-color:grey");
+        hBoxLayoutMargin();
+    }
+
+    private void hBoxLayoutMargin() {
+
         HBox.setMargin( sectorComboBox, new Insets(30, 5, 30, 10) );
         HBox.setMargin( yearlyComboBox, new Insets(30, 5, 30, 10) );
         HBox.setMargin( chartsButton, new Insets(30, 5, 30, 10) );
-        comboBoxLayout.setStyle("-fx-background-color:grey");
     }
 
-    private void createPane() {
+    private BorderPane createPane() {
 
         comboBoxGroupPane = new BorderPane();
         comboBoxGroupPane.setTop( comboBoxLayout );
         comboBoxGroupPane.setCenter( listView );
+        return comboBoxGroupPane;
     }
 
     public BorderPane getComboBoxGroupPane() {

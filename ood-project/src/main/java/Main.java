@@ -13,6 +13,7 @@ public class Main {
     public static void main( String[] args ) {
 
         List<String> sectorNamesList = new ArrayList<>();
+
        Arrays.asList(SectorName.values()).forEach( sectorName -> {
            sectorNamesList.add(sectorName.getSector());
        });

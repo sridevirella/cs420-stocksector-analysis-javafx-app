@@ -9,9 +9,11 @@ import java.io.IOException;
 
 public class SectorDataApp extends Application {
 
-    private DisplaySectorsData sectorDataViews;
-    private SectorStockCharts chartViews;
-    private Scene scene1;
+    private static DisplaySectorsData sectorDataViews;
+    private static SectorStockCharts chartViews;
+    private static Scene primaryScene;
+    private static Scene SecondaryScene;
+    private static Stage primaryStage;
 
     public static void main(String[] args) {
         launch(args);
@@ -20,28 +22,35 @@ public class SectorDataApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
 
-        this.sectorDataViews = new DisplaySectorsData();
-        this.chartViews = new SectorStockCharts();
-        createBorderPanes(stage);
-        radioGroupListener(stage);
+        primaryStage = stage;
+        sectorDataViews = new DisplaySectorsData();
+        chartViews = new SectorStockCharts();
+        createBorderPanes();
+        radioGroupListener();
+        homeButtonListener();
     }
 
-    private void radioGroupListener(Stage stage) {
+    private void radioGroupListener() {
 
-        sectorDataViews.getChartsButton().setOnMouseClicked(event -> stage.setScene(scene1));
+        sectorDataViews.getChartsButton().setOnMouseClicked(event -> primaryStage.setScene(SecondaryScene));
     }
 
-    private void createBorderPanes( Stage stage ) {
+    private void homeButtonListener() {
 
-        setPrimaryStage( sectorDataViews.getComboBoxGroupPane(), stage );
-        scene1 = new Scene(chartViews.getRadioGroupPane(), 700, 600);
+        chartViews.getHomeButton().setOnMouseClicked(event -> primaryStage.setScene(primaryScene));
     }
 
-    private void setPrimaryStage( BorderPane pane, Stage stage ){
+    private void createBorderPanes() {
 
-        Scene scene = new Scene(pane, 700, 500);
-        stage.setScene(scene);
-        stage.setTitle("Stock Sectors Yearly Data");
-        stage.show();
+        setPrimaryStage( sectorDataViews.getComboBoxGroupPane() );
+        SecondaryScene = new Scene(chartViews.getRadioGroupPane(), 700, 600);
+    }
+
+    private void setPrimaryStage( BorderPane pane){
+
+        primaryScene = new Scene(pane, 700, 500);
+        primaryStage.setScene(primaryScene);
+        primaryStage.setTitle("Stock Sectors Yearly Data");
+        primaryStage.show();
     }
 }

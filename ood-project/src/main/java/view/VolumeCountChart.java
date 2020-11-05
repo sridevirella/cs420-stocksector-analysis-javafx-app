@@ -16,38 +16,37 @@ import static util.VolumeCountDataUtil.getTargetVolumeCountDataMap;
 
 class VolumeCountChart {
 
-    private CategoryAxis xAxis;
-    private NumberAxis yAxis;
     private BarChart<String, Number> barChart;
-    private XYChart.Series<String, Number> series_2018_2020;
+    private static CategoryAxis xAxis;
+    private static NumberAxis yAxis;
+    private static XYChart.Series<String, Number> series_2018_2020;
 
     VolumeCountChart() {
 
-        getTargetVolumeCountData();
-        initBarGraph();
+        this.barChart =  initAxisAndChart();
+        addDataToBarGraph();
     }
 
-    private void initBarGraph() {
+    private void addDataToBarGraph() {
 
-        initAxisAndChart();
         setChartProperties();
         initChartSeries();
+        getTargetVolumeCountData();
         createBarChartSeries();
     }
 
-    private void initAxisAndChart() {
+    private BarChart<String, Number> initAxisAndChart() {
 
         xAxis = new CategoryAxis();
         yAxis = new NumberAxis();
-        barChart = new BarChart<>(xAxis, yAxis);
+        return new BarChart<>(xAxis, yAxis);
     }
 
     private void setChartProperties() {
 
-        barChart.setTitle("The total number of times a sector gained an inflow volume of more than $100 Million.");
+        barChart.setTitle("Total occurrences of inflow volume with more than $100 Million.");
         xAxis.setLabel("Sector");
         yAxis.setLabel("Count");
-        barChart.setVisible(false);
         barChart.setBarGap(10);
     }
 

@@ -1,5 +1,6 @@
 package api;
 
+import domain.SectorName;
 import domain.YearName;
 import org.json.JSONObject;
 
@@ -7,19 +8,19 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class WriteFile {
 
     private final List<String> symbols;
     private final Map<String, String> fullFilePath;
-    private final HttpClient httpConnInst;
     private static BufferedWriter bw;
 
     public WriteFile(List<String> fileName) throws IOException {
 
         this.fullFilePath = createFile( fileName );
-        this.httpConnInst = new HttpClient();
         this.symbols = fileName;
     }
 
@@ -36,7 +37,7 @@ public class WriteFile {
     private void writeData( String symbol ) throws IOException {
 
         bw = new BufferedWriter( new FileWriter( fullFilePath.get(symbol), true) );
-        InputStream is   = httpConnInst.getApiData( symbol );
+        InputStream is   = new HttpClient(symbol).getApiData();
         parseApiData( is );
         bw.flush();
         bw.close();

@@ -19,33 +19,34 @@ import static util.YearByVolumeDataUtil.getYearByVolumeDataMap;
 
 class YearByVolumeChart {
 
-    private CategoryAxis xAxis;
-    private NumberAxis yAxis;
-    private BarChart barChart;
-    private List<YearName> yearList;
-    private XYChart.Series<String, Long> series_2018;
-    private XYChart.Series<String, Long> series_2019;
-    private XYChart.Series<String, Long> series_2020;
-   // private  ObservableList<XYChart.Data<String, Long>> volumeObservableList;
+    private BarChart<String, Long> barChart;
+    private static List<YearName> yearList;
+    private static CategoryAxis xAxis;
+    private static NumberAxis yAxis;
+    private static XYChart.Series<String, Long> series_2018;
+    private static XYChart.Series<String, Long> series_2019;
+    private static XYChart.Series<String, Long> series_2020;
+
         YearByVolumeChart() {
 
-            yearList = getRequiredYearList();
-            initBarGraph();
+            this.barChart = initAxisAndChart();
+            addDataToBarGraph();
     }
 
-    private void initBarGraph() {
+    private void addDataToBarGraph() {
 
         initAxisAndChart();
         setChartProperties();
         initChartSeries();
+        yearList = getRequiredYearList();
         createBarChartSeries();
     }
 
-    private void initAxisAndChart() {
+    private BarChart<String, Long> initAxisAndChart() {
 
         xAxis = new CategoryAxis();
         yAxis = new NumberAxis();
-        barChart = new BarChart<String, Number>(xAxis, yAxis);
+        return new BarChart(xAxis, yAxis);
     }
 
     private void setChartProperties() {
@@ -53,7 +54,6 @@ class YearByVolumeChart {
         barChart.setTitle("Each sector total inflow cash for the years 2018, 2019 and 2020");
         xAxis.setLabel("Sector");
         yAxis.setLabel("Volume In Millions $");
-        barChart.setVisible(false);
     }
 
     private void initChartSeries() {
@@ -63,7 +63,7 @@ class YearByVolumeChart {
         series_2020 = new XYChart.Series<>();
     }
 
-    private static List<YearName> getRequiredYearList() {
+    private List<YearName> getRequiredYearList() {
 
         return Arrays.stream(YearName.values())
                 .filter(yearName -> yearName.equals(YearName.YEAR_2018)
@@ -108,7 +108,7 @@ class YearByVolumeChart {
             createObservableList(year, series_2020);
     }
 
-    public BarChart getBarChart() {
+    public BarChart<String, Long> getBarChart() {
             return barChart;
     }
 }
