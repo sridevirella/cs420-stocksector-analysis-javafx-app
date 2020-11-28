@@ -9,7 +9,6 @@ public class HttpClient {
 
     private final static int connectTimeout = 3000;
     private final static String apiKey = System.getenv("API_KEY");
-
     private HttpURLConnection connection;
 
     public HttpClient(String sectorSymbol) throws IOException {

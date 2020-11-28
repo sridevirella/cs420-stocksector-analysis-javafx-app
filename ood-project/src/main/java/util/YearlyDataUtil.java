@@ -1,13 +1,13 @@
 package util;
 
-import api.ReadFile;
-import domain.MonthlyData;
-import domain.YearName;
+import model.MonthlyData;
+import model.YearName;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,7 +28,7 @@ public class YearlyDataUtil {
 
     private static BufferedReader saveToBuffer( String fileName ) throws IOException {
 
-        return new BufferedReader( new InputStreamReader(ReadFile.getDataStream( fileName )) );
+        return new BufferedReader( new InputStreamReader(Files.newInputStream( FilePath.getFilePath(fileName) ) ));
     }
 
     private static void getAllLines( BufferedReader br, List<MonthlyData> monthlyList ) {

@@ -1,8 +1,8 @@
 package util;
 
-import domain.MonthlyData;
-import domain.SectorName;
-import domain.YearName;
+import model.MonthlyData;
+import model.SectorName;
+import model.YearName;
 
 import java.io.IOException;
 import java.util.*;
