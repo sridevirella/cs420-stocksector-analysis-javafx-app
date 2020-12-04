@@ -11,13 +11,18 @@ public class ApiData {
 
     public ApiData() {}
 
-    public boolean getDataFromApi() throws IOException, InterruptedException {
+    public boolean getDataFromApi() {
 
-        List<String> sectorNamesList = new ArrayList<>();
+        try {
+            List<String> sectorNamesList = new ArrayList<>();
 
             Arrays.asList(SectorName.values()).forEach(sectorName -> sectorNamesList.add(sectorName.getSector()));
-            WriteToFile writeFileInstance = new WriteToFile( sectorNamesList );
+            WriteToFile writeFileInstance = new WriteToFile(sectorNamesList);
             writeFileInstance.getApiDataAndWriteToFile();
-        return true;
+            return true;
+
+        }catch(Exception e) {
+            return false;
+        }
     }
 }

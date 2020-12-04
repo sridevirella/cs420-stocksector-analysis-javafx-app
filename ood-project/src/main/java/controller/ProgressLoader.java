@@ -1,11 +1,11 @@
 package controller;
 
 import api.ApiData;
-import util.FilePath;
 import javafx.animation.FadeTransition;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -20,14 +20,20 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
+import model.SectorName;
+import util.FilePath;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ProgressLoader {
 
     private Stage primaryStage;
     private static Pane progressLayout;
     private static ProgressBar progressBar;
+    private static boolean apiCallStatus;
 
     public ProgressLoader(Stage stage) throws IOException {
 
@@ -37,16 +43,34 @@ public class ProgressLoader {
 
     public void initPreLoader() throws IOException {
 
-        Task<Boolean> task = defineApiTask();
-        getSplashMessageBox();
-        runApiTask(task);
+        if(checkIfFilesExist())
+            showMainStage();
+        else {
+            Task<Boolean> task = defineApiTask();
+            getSplashMessageBox();
+            runApiTask(task);
+        }
+    }
+
+    private boolean checkIfFilesExist() {
+
+        AtomicBoolean isFilesExists = new AtomicBoolean(true);
+        Arrays.asList(SectorName.values()).forEach(sectorName -> checkFilesExist(isFilesExists, sectorName));
+        return isFilesExists.get();
+    }
+
+    private void checkFilesExist(AtomicBoolean isFilesExists, SectorName sectorName) {
+
+        if(Files.notExists(FilePath.getPathForLoader(sectorName + ".txt")))
+            isFilesExists.set(false);
     }
 
     private Task<Boolean> defineApiTask() {
 
         return new Task<>() {
-                @Override public Boolean call() throws IOException, InterruptedException {
-                    return new ApiData().getDataFromApi();
+                @Override public Boolean call() {
+                    apiCallStatus = new ApiData().getDataFromApi();
+                    return apiCallStatus;
                 }
             };
     }
@@ -63,7 +87,12 @@ public class ProgressLoader {
 
     private void taskOnSuccessORFailure(Task<Boolean> task) {
 
-        task.setOnSucceeded((e) -> showMainStage());
+        task.setOnSucceeded((e) -> {
+            if(apiCallStatus)
+                showMainStage();
+            else
+                createNoApiDataStage();
+        });
         task.setOnFailed((e) -> { createNoApiDataStage(); });
         new Thread(task).start();
     }
@@ -106,17 +135,27 @@ public class ProgressLoader {
     private void createNoApiDataStage() {
 
         BorderPane pane = new BorderPane();
-        pane.setCenter(new Text("There is a problem while fetching data from the api"));
+        pane.setCenter(getFailureTextMessage());
         Stage newStage = new Stage();
         Scene newScene = new Scene(pane, 600, 600);
         newStage.setScene(newScene);
         newStage.show();
     }
 
+    private HBox getFailureTextMessage() {
+
+        Text apiFailureMessage = new Text("Sorry!! something went wrong while fetching data from the api");
+        HBox messageHBox = new HBox();
+        messageHBox.setStyle("-fx-background-color: #FFFFFF;-fx-font-size: 16px;");
+        messageHBox.setAlignment(Pos.CENTER);
+        messageHBox.getChildren().add(apiFailureMessage);
+        return messageHBox;
+    }
+
     private void showMainStage() {
         try {
             Stage mainStage = new Stage();
-            new StockDataController(mainStage);
+            new StockViewController(mainStage);
 
         } catch (IOException e) {
             e.printStackTrace();

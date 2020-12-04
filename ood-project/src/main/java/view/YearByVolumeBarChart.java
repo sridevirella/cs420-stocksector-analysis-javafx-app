@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static util.FilePath.caseFormatter;
+
 
 class YearByVolumeBarChart {
 
@@ -76,7 +78,7 @@ class YearByVolumeBarChart {
 
         return yearByVolumeDataMap.keySet()
                 .stream()
-                .map( key -> { return new XYChart.Data<>( key, yearByVolumeDataMap.get(key) ); })
+                .map( key -> { return new XYChart.Data<>( caseFormatter(key), yearByVolumeDataMap.get(key) ); })
                 .collect(Collectors.toList());
     }
 

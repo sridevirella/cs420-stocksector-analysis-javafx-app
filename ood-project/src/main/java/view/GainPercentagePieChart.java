@@ -5,14 +5,11 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
-import computedata.StockGainData;
-import javafx.scene.control.ListCell;
+import computedata.StockGainLossData;
 import javafx.scene.text.Text;
-import model.YearName;
 
 import static util.FilePath.caseFormatter;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,16 +18,14 @@ import java.util.stream.Collectors;
 class GainPercentagePieChart {
 
     private PieChart pieChart;
-    private static StockGainData gainPerChartInstance;
+    private static StockGainLossData gainPerChartInstance;
     private static String fromYear, toYear;
-    private static boolean isItForLossCalculation = false;
 
-        GainPercentagePieChart(String fromDate, String toDate, boolean isItForLoss) {
+        GainPercentagePieChart(String fromDate, String toDate) {
 
-            gainPerChartInstance = new StockGainData(fromDate, toDate);
+            gainPerChartInstance = new StockGainLossData(fromDate, toDate);
             fromYear = fromDate;
             toYear = toDate;
-            isItForLossCalculation = isItForLoss;
             this.pieChart = initPieChart();
     }
 
@@ -44,10 +39,10 @@ class GainPercentagePieChart {
 
     private List<PieChart.Data> addDataToPieChart() {
 
-        Map<String, Integer>  stockGainPercentageMap = gainPerChartInstance.stockGainPercentageData();
+        Map<String, Number>  stockGainPercentageMap = gainPerChartInstance.stockGainPercentageData();
         return stockGainPercentageMap.keySet()
                                           .stream()
-                                          .map( key -> { return new PieChart.Data(caseFormatter(key), ( isItForLossCalculation) ?  (-1) * stockGainPercentageMap.get(key): stockGainPercentageMap.get(key) ); })
+                                          .map( key -> { return new PieChart.Data(caseFormatter(key), Double.parseDouble(String.valueOf(stockGainPercentageMap.get(key)))); })
                                           .collect(Collectors.toList());
     }
 
@@ -61,15 +56,18 @@ class GainPercentagePieChart {
 
             private void changePieLabels(double top, double left, double contentWidth, double contentHeight) {
 
-                if (getLabelsVisible()) {
-                    getData().forEach(data -> {
-                        Optional<Node> textLabel = pieChart.lookupAll(".chart-pie-label").stream()
-                                .filter(value -> value instanceof Text && ((Text) value).getText().contains(data.getName())).findAny();
-                        textLabel.ifPresent(node -> ((Text) node).setText((isItForLossCalculation) ? (-1) * data.getPieValue() + "%, " + data.getName()
-                                                                                                   : data.getPieValue() + "%, " + data.getName()));
-                    });
-                }
+                if (getLabelsVisible())
+                    setForEachPieValue();
                 super.layoutChartChildren(top, left, contentWidth, contentHeight);
+            }
+
+            private void setForEachPieValue() {
+
+                getData().forEach(data -> {
+                    Optional<Node> textLabel = pieChart.lookupAll(".chart-pie-label").stream()
+                            .filter(value -> value instanceof Text && ((Text) value).getText().contains(data.getName())).findAny();
+                    textLabel.ifPresent(node -> ((Text) node).setText(data.getName()));
+                });
             }
         };
     }

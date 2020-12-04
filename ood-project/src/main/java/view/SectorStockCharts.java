@@ -2,9 +2,8 @@ package view;
 
 import computedata.YearlyPriceData;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.chart.PieChart;
+import javafx.scene.chart.BarChart;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.RadioButton;
@@ -15,7 +14,6 @@ import model.SectorName;
 import model.YearName;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -30,7 +28,7 @@ public class SectorStockCharts {
     private static RadioButton rb1, rb2;
     private static ToggleGroup radioGroup;
     private static ComboBox<YearName> yearCB;
-    private static Map<YearName, PieChart> pieChartCollectionMap;
+    private static Map<YearName, BarChart<String, Number>> pieChartCollectionMap;
 
     public SectorStockCharts() throws IOException {
 
@@ -61,39 +59,69 @@ public class SectorStockCharts {
 
     private void initRadioGroup() {
 
-        rb1 = new RadioButton("selection1 some question??");
-        rb2 = new RadioButton("selection2");
+        rb1 = new RadioButton("The most affected stock sector in the year ->");
+        rb2 = new RadioButton("In 2008 the most affected sector price distribution");
+        radioGroupProperties();
+        radioGroupHBox = new HBox();
+        initRadioGroupListener();
+    }
+
+    private void radioGroupProperties() {
+
         radioGroup = new ToggleGroup();
         Stream.of(rb1, rb2).forEach(radioButton -> radioButton.setToggleGroup(radioGroup));
         rb1.setUserData("rb1");
         rb2.setUserData("rb2");
-
-        radioGroupHBox = new HBox();
-        initRadioGroupListener();
     }
 
     private void initRadioGroupListener() {
 
             radioGroup.selectedToggleProperty().addListener( (ov, old_toggle, new_toggle) -> {
 
-                if (radioGroup.getSelectedToggle() != null) {
-                    if(radioGroup.getSelectedToggle().getUserData().equals("rb1")){
-
-
-                        GainPercentagePieChart pieChart2008 = new GainPercentagePieChart("2008,DECEMBER", "2008,JANUARY", true);
-                        pieChartCollectionMap.put( YearName.YEAR_2008, pieChart2008.getPieChart());
-
-                        GainPercentagePieChart pieChart2020 = new GainPercentagePieChart("2020,NOVEMBER", "2020,JANUARY", true);
-                        pieChartCollectionMap.put( YearName.YEAR_2020, pieChart2020.getPieChart());
-
-                        yearCB.getItems().clear();
-                        yearCB.getItems().addAll(FXCollections.observableArrayList(pieChartCollectionMap.keySet())
-                                .sorted((o1, o2) -> Integer.compare(o1.getYear(), o2.getYear())));
-                    } else {
-
-                    }
-                }
+                if (radioGroup.getSelectedToggle() != null)
+                    handleGroupSelection();
             });
+    }
+
+    private void handleGroupSelection() {
+
+        if(radioGroup.getSelectedToggle().getUserData().equals("rb1"))
+            handleButtonOneSelection();
+            else
+            addFinanceSectorBarGraph();
+    }
+
+    private void handleButtonOneSelection() {
+
+        getLossPercentageGraphs();
+        updateYearComboBox();
+    }
+
+    private void addFinanceSectorBarGraph() {
+
+        try {
+            radioGroupHBox.getChildren().clear();
+            radioGroupHBox.getChildren().add(new FinanceSectorBarGraph().getBarChart());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateYearComboBox() {
+
+        yearCB.getItems().clear();
+        yearCB.getItems().addAll(FXCollections.observableArrayList(pieChartCollectionMap.keySet())
+                .sorted((o1, o2) -> Integer.compare(o1.getYear(), o2.getYear())));
+    }
+
+    private void getLossPercentageGraphs() {
+
+        LossPercentageBarGraph barGraph2008 = new LossPercentageBarGraph("2008,DECEMBER", "2008,JANUARY");
+        pieChartCollectionMap.put( YearName.YEAR_2008, barGraph2008.getBarChart());
+
+        LossPercentageBarGraph barGraph2020 = new LossPercentageBarGraph("2020,NOVEMBER", "2020,JANUARY");
+        pieChartCollectionMap.put( YearName.YEAR_2020, barGraph2020.getBarChart());
     }
 
     private void setupYearCB() {
@@ -128,9 +156,8 @@ public class SectorStockCharts {
         sectorCB = new ComboBox<>();
         sectorCB.setPromptText("---Select a Sector---");
         sectorCB.setStyle("-fx-font-size:14; -fx-font-family: Courier");
-        yearlyDataMap = yearlyPriceDataIns.getYearlyPriceData();
+        yearlyDataMap = yearlyPriceDataIns.getYearlyPriceData(true);
         sectorCB.getItems().addAll(FXCollections.observableArrayList( yearlyDataMap.keySet()).sorted((o1, o2) -> o1.getOrder() - o2.getOrder()));
-
         sectorCBListener();
     }
 
@@ -146,16 +173,21 @@ public class SectorStockCharts {
     private void sectorCBListener() {
 
         sectorCB.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                try {
-                    chartHBox.getChildren().clear();
-                    chartHBox.getChildren().add(new YearlyPriceLineChart().addDataToLineChart(yearlyDataMap.get(newValue), newValue.name()));
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            if (newValue != null)
+                getLineChart(newValue);
         });
+    }
+
+    private void getLineChart(SectorName newValue) {
+
+        try {
+            chartHBox.getChildren().clear();
+            chartHBox.getChildren().add(new YearlyPriceLineChart().addDataToLineChart(yearlyDataMap.get(newValue), newValue.name()));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void handleYearlyCbPrompt() {

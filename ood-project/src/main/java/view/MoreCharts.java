@@ -68,7 +68,7 @@ public class MoreCharts {
     private void getSelectedChart() {
 
         if (radioGroup.getSelectedToggle().getUserData() == "button1")
-           chartsHBox.getChildren().add(new GainPercentagePieChart("2018,DECEMBER", "2020,OCTOBER", false).getPieChart());
+           chartsHBox.getChildren().add(new GainPercentagePieChart("2018,DECEMBER", "2020,OCTOBER").getPieChart());
 
         else if (radioGroup.getSelectedToggle().getUserData() == "button2")
             chartsHBox.getChildren().add(new YearByVolumeBarChart().getBarChart());

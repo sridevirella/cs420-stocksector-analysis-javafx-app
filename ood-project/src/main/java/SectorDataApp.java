@@ -1,5 +1,4 @@
 import controller.ProgressLoader;
-import controller.StockDataController;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -13,12 +12,7 @@ public class SectorDataApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-//        try {
-//            new ProgressLoader(primaryStage);
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-        new StockDataController(primaryStage);
+
+            new ProgressLoader(primaryStage);
     }
 }

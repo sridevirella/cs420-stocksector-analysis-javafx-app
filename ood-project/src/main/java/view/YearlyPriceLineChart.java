@@ -59,7 +59,7 @@ class YearlyPriceLineChart {
     private LineChart<Number, Number> initLineChart() {
 
         lineChart = new LineChart<>(xAxis, yAxis);
-        lineChart.setTitle("Sector Yearly Stock Price");
+        lineChart.setTitle("Sector Year End Stock Price");
         lineChart.getData().add(series);
         return lineChart;
     }

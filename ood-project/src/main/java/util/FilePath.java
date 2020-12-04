@@ -1,7 +1,5 @@
 package util;
 
-import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
@@ -18,6 +16,11 @@ public class FilePath {
     public static Path getInFilePath() {
 
         return Path.of("build", "resources", "main").toAbsolutePath();
+    }
+
+    public static Path getPathForLoader( String fileName ) {
+
+        return Path.of("build","resources", "main", fileName).toAbsolutePath();
     }
 
     public static String caseFormatter(String inputString) {
