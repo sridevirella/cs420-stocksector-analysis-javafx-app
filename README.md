@@ -1,7 +1,5 @@
 # Recession Impact Analysis on Stock Market Sectors
 
-## Project Objective:
-
 The main objective is to examine how the 11 stock market sectors (Materials, Industrials, Financials, Energy, Consumer discretionary, Information technology, Communication services, Real estate, Health care, Consumer staples and Utilities ) are affected by two major recessions in 2008 and 2020. This application analyzes which sectors majorly rose or fell during both recessions, which sectors were able maintain a steady growth despite recession, and how long it has taken for majorly affected sectors to recover from losses.
 
 By examining the retrieved dataset through my application, I answered the following questions:
